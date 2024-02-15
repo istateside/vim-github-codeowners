@@ -11,8 +11,7 @@ function! codeowners#getGitRootDir()
 endfunction
 
 function! codeowners#getCodeownersPath()
-  let l:root = codeowners#getGitRootDir()
-  return l:root . '/' . findfile('CODEOWNERS', l:root)
+  return findfile('CODEOWNERS', codeowners#getGitRootDir())
 endfunction
 
 function! codeowners#isCodeownersFileExist()
