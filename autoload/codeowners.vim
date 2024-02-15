@@ -6,10 +6,17 @@ function! codeowners#reset()
   let s:cache = {}
 endfunction
 
-function! codeowners#isCodeownersFileExist()
-  let s:projectDir = split(system('git rev-parse --show-toplevel'))[0]
+function! codeowners#getGitRootDir()
+  return split(system('git rev-parse --show-toplevel'))[0]
+endfunction
 
-  return filereadable(s:projectDir . '/CODEOWNERS')
+function! codeowners#getCodeownersPath()
+  let l:root = codeowners#getGitRootDir()
+  return l:root . '/' . findfile('CODEOWNERS', l:root)
+endfunction
+
+function! codeowners#isCodeownersFileExist()
+  return filereadable(codeowners#getCodeownersPath())
 endfunction
 
 function! codeowners#whoBufname()
@@ -22,7 +29,7 @@ function! codeowners#who(file)
       let s:cache[a:file] = "Unloved"
     else
       let s:bin = globpath(&rtp, "node_modules/.bin/github-codeowners") 
-      let l:output = system(s:bin . " -c " . s:projectDir . "/CODEOWNERS who " . a:file)
+      let l:output = system(s:bin . " -c " . codeowners#getCodeownersPath() . " who " . a:file)
       let s:cache[a:file] = get(split(l:output), 1, "Unloved") 
     endif
   endif
