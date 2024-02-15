@@ -9,7 +9,7 @@ endfunction
 function! codeowners#isCodeownersFileExist()
   let s:projectDir = split(system('git rev-parse --show-toplevel'))[0]
 
-  return filereadable(s:projectDir . '/.github/CODEOWNERS')
+  return filereadable(s:projectDir . '/CODEOWNERS')
 endfunction
 
 function! codeowners#whoBufname()
@@ -22,7 +22,7 @@ function! codeowners#who(file)
       let s:cache[a:file] = "Unloved"
     else
       let s:bin = globpath(&rtp, "node_modules/.bin/github-codeowners") 
-      let l:output = system(s:bin . " who " . a:file)
+      let l:output = system(s:bin . " -c " . s:projectDir . "/CODEOWNERS who " . a:file)
       let s:cache[a:file] = get(split(l:output), 1, "Unloved") 
     endif
   endif
